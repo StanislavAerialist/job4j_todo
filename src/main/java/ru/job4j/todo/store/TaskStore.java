@@ -83,7 +83,7 @@ public class TaskStore {
         List<Task> rsl = new ArrayList<>();
         try {
             session.beginTransaction();
-            rsl = session.createQuery("from Task as t where t.done = :true", Task.class)
+            rsl = session.createQuery("from Task as t where t.done = true", Task.class)
                     .getResultList();
             session.getTransaction().commit();
         } catch (Exception e) {
@@ -99,7 +99,7 @@ public class TaskStore {
         List<Task> rsl = new ArrayList<>();
         try {
             session.beginTransaction();
-            rsl = session.createQuery("from Task as t where t.done = :false", Task.class)
+            rsl = session.createQuery("from Task as t where t.done = false", Task.class)
                     .getResultList();
             session.getTransaction().commit();
         } catch (Exception e) {
