@@ -1,4 +1,4 @@
-package ru.job4j.todo.store;
+package ru.job4j.todo.repository;
 
 import lombok.AllArgsConstructor;
 import org.hibernate.Session;
@@ -12,9 +12,10 @@ import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
-public class TaskStore {
+public class HibernateTaskStore implements TaskStore {
     private final SessionFactory sf;
 
+    @Override
     public Task add(Task task) {
         Session session = sf.openSession();
         try {
@@ -29,6 +30,7 @@ public class TaskStore {
         return task;
     }
 
+    @Override
     public boolean update(Task task) {
         Session session = sf.openSession();
         boolean rsl = false;
@@ -44,6 +46,8 @@ public class TaskStore {
         }
         return rsl;
     }
+
+    @Override
     public boolean delete(int id) {
         Session session = sf.openSession();
         boolean rsl = false;
@@ -63,6 +67,7 @@ public class TaskStore {
         return rsl;
     }
 
+    @Override
     public List<Task> findAll() {
         Session session = sf.openSession();
         List<Task> rsl = new ArrayList<>();
@@ -78,6 +83,7 @@ public class TaskStore {
         return rsl;
     }
 
+    @Override
     public List<Task> findDone() {
         Session session = sf.openSession();
         List<Task> rsl = new ArrayList<>();
@@ -94,6 +100,7 @@ public class TaskStore {
         return rsl;
     }
 
+    @Override
     public List<Task> findNew() {
         Session session = sf.openSession();
         List<Task> rsl = new ArrayList<>();
@@ -110,6 +117,7 @@ public class TaskStore {
         return rsl;
     }
 
+    @Override
     public Optional<Task> findById(int id) {
         Session session = sf.openSession();
         Optional<Task> rsl = Optional.empty();
@@ -127,6 +135,7 @@ public class TaskStore {
         return rsl;
     }
 
+    @Override
     public boolean setDone(Task task) {
         Session session = sf.openSession();
         boolean rsl = false;

@@ -5,12 +5,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
-import ru.job4j.todo.service.TaskService;
+import ru.job4j.todo.service.HibernateTaskService;
 
 @Controller
 @AllArgsConstructor
 public class TaskController {
-    private final TaskService taskService;
+    private final HibernateTaskService taskService;
 
     @GetMapping({"/", "/index"})
     public String getIndex(Model model) {

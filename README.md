@@ -53,4 +53,4 @@
 ## Telegram для связи с разработчиком:
 
 @Stanislav_Bogatyrev
-[ссылку](https://t.me/Stanislav_Bogatyrev)
+[ссылка](https://t.me/Stanislav_Bogatyrev)

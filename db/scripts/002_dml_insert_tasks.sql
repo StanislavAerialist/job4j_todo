@@ -1,1 +1,0 @@
-insert into tasks(description, created, done) values('description1', timestamp '2023-03-15 15:00' , 'false');
