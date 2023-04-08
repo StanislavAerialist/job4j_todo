@@ -8,6 +8,7 @@ import ru.job4j.todo.model.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
@@ -109,14 +110,14 @@ public class TaskStore {
         return rsl;
     }
 
-    public Task findById(int id) {
+    public Optional<Task> findById(int id) {
         Session session = sf.openSession();
-        Task rsl = null;
+        Optional<Task> rsl = Optional.empty();
         try {
             session.beginTransaction();
             rsl = session.createQuery("from Task as t where t.id = :tId", Task.class)
                     .setParameter("tId", id)
-                    .uniqueResult();
+                    .uniqueResultOptional();
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
@@ -126,8 +127,9 @@ public class TaskStore {
         return rsl;
     }
 
-    public void setDone(Task task) {
+    public boolean setDone(Task task) {
         Session session = sf.openSession();
+        boolean rsl = false;
         try {
             session.beginTransaction();
             session.createQuery("UPDATE Task SET done = :tDone where id = :tId")
@@ -135,10 +137,12 @@ public class TaskStore {
                     .setParameter("tId", task.getId())
                     .executeUpdate();
             session.getTransaction().commit();
+            rsl = true;
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
+        return rsl;
     }
 }
