@@ -70,20 +70,29 @@ public class TaskController {
 
     @PostMapping("/update")
     public String update(@ModelAttribute Task task, Model model) {
-        taskService.update(task);
+        if (!taskService.update(task)) {
+            model.addAttribute("message", "Ошибка редактирования задания");
+            return "errors/404";
+        }
         model.addAttribute("message", "Задание отредактировано успешно!");
         return "tasks/success";
     }
 
     @GetMapping("/delete/{id}")
     public String delete(Model model, @PathVariable int id) {
-            taskService.delete(id);
+        if (!taskService.delete(id)) {
+            model.addAttribute("message", "Ошибка удаления задания");
+            return "errors/404";
+        }
             return "redirect:/index";
     }
 
     @GetMapping("/done/{id}")
     public String updateState(Model model, @PathVariable int id) {
-        taskService.setDone(taskService.findById(id).get());
+        if (!taskService.setDone(taskService.findById(id).get())) {
+            model.addAttribute("message", "Ошибка выполнения задания");
+            return "errors/404";
+        }
         model.addAttribute("message", "Заданаие выполнено!");
         return "tasks/success";
     }
