@@ -20,13 +20,13 @@ public class TaskController {
 
     @GetMapping("/done")
     public String getCompleted(Model model) {
-        model.addAttribute("tasks", taskService.findDone());
+        model.addAttribute("tasks", taskService.findSortedByDone(true));
         return "index";
     }
 
     @GetMapping("/new")
     public String getNew(Model model) {
-        model.addAttribute("tasks", taskService.findNew());
+        model.addAttribute("tasks", taskService.findSortedByDone(false));
         return "index";
     }
 
@@ -38,14 +38,12 @@ public class TaskController {
 
     @PostMapping("/add")
     public String create(@ModelAttribute Task task, Model model) {
-        try {
-            taskService.add(task);
+        if (taskService.add(task) != null) {
             model.addAttribute("message", "Задание добавлено успешно!");
             return "tasks/success";
-        } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
-            return "errors/404";
         }
+        model.addAttribute("message", "Ошибка создания");
+        return "errors/404";
     }
 
     @GetMapping("/{id}")
@@ -72,35 +70,20 @@ public class TaskController {
 
     @PostMapping("/update")
     public String update(@ModelAttribute Task task, Model model) {
-        try {
         taskService.update(task);
         model.addAttribute("message", "Задание отредактировано успешно!");
         return "tasks/success";
-        } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
-            return "errors/404";
-        }
     }
 
     @GetMapping("/delete/{id}")
     public String delete(Model model, @PathVariable int id) {
-        try {
             taskService.delete(id);
             return "redirect:/index";
-        } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
-            return "errors/404";
-        }
     }
 
     @GetMapping("/done/{id}")
     public String updateState(Model model, @PathVariable int id) {
-        var taskOptional = taskService.findById(id);
-        if (taskOptional.isEmpty()) {
-            model.addAttribute("message", "Задание не найдено");
-            return "errors/404";
-        }
-        taskService.setDone(taskOptional.get());
+        taskService.setDone(taskService.findById(id).get());
         model.addAttribute("message", "Заданаие выполнено!");
         return "tasks/success";
     }

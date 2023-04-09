@@ -84,29 +84,13 @@ public class HibernateTaskStore implements TaskStore {
     }
 
     @Override
-    public List<Task> findDone() {
+    public List<Task> findSortedByDone(boolean done) {
         Session session = sf.openSession();
         List<Task> rsl = new ArrayList<>();
         try {
             session.beginTransaction();
-            rsl = session.createQuery("from Task as t where t.done = true", Task.class)
-                    .getResultList();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
-        }
-        return rsl;
-    }
-
-    @Override
-    public List<Task> findNew() {
-        Session session = sf.openSession();
-        List<Task> rsl = new ArrayList<>();
-        try {
-            session.beginTransaction();
-            rsl = session.createQuery("from Task as t where t.done = false", Task.class)
+            rsl = session.createQuery("from Task as t where t.done = :tDone", Task.class)
+                    .setParameter("tDone", done)
                     .getResultList();
             session.getTransaction().commit();
         } catch (Exception e) {

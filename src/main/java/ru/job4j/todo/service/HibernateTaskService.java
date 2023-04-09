@@ -34,13 +34,8 @@ public class HibernateTaskService implements TaskService {
     }
 
     @Override
-    public List<Task> findDone() {
-        return taskStore.findDone();
-    }
-
-    @Override
-    public List<Task> findNew() {
-        return taskStore.findNew();
+    public List<Task> findSortedByDone(boolean done) {
+        return taskStore.findSortedByDone(done);
     }
 
     @Override

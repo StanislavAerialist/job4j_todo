@@ -10,8 +10,7 @@ public interface TaskService {
     boolean update(Task task);
     boolean delete(int id);
     List<Task> findAll();
-    List<Task> findDone();
-    List<Task> findNew();
+    List<Task> findSortedByDone(boolean done);
     Optional<Task> findById(int id);
     boolean setDone(Task task);
 }
