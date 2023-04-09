@@ -42,7 +42,7 @@ public class TaskController {
             model.addAttribute("message", "Задание добавлено успешно!");
             return "tasks/success";
         }
-        model.addAttribute("message", "Ошибка создания");
+        model.addAttribute("message", "Ошибка создания задания");
         return "errors/404";
     }
 
@@ -89,7 +89,7 @@ public class TaskController {
 
     @GetMapping("/done/{id}")
     public String updateState(Model model, @PathVariable int id) {
-        if (!taskService.setDone(taskService.findById(id).get())) {
+        if (!taskService.setDone(id)) {
             model.addAttribute("message", "Ошибка выполнения задания");
             return "errors/404";
         }

@@ -120,14 +120,14 @@ public class HibernateTaskStore implements TaskStore {
     }
 
     @Override
-    public boolean setDone(Task task) {
+    public boolean setDone(int id) {
         Session session = sf.openSession();
         boolean rsl = false;
         try {
             session.beginTransaction();
             session.createQuery("UPDATE Task SET done = :tDone where id = :tId")
                     .setParameter("tDone", true)
-                    .setParameter("tId", task.getId())
+                    .setParameter("tId", id)
                     .executeUpdate();
             session.getTransaction().commit();
             rsl = true;

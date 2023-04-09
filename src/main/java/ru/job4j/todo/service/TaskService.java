@@ -12,5 +12,5 @@ public interface TaskService {
     List<Task> findAll();
     List<Task> findSortedByDone(boolean done);
     Optional<Task> findById(int id);
-    boolean setDone(Task task);
+    boolean setDone(int id);
 }

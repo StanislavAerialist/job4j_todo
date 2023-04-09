@@ -44,7 +44,7 @@ public class HibernateTaskService implements TaskService {
     }
 
     @Override
-    public boolean setDone(Task task) {
-        return taskStore.setDone(task);
+    public boolean setDone(int id) {
+        return taskStore.setDone(id);
     }
 }
