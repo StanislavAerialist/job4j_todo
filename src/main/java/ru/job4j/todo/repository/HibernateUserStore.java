@@ -14,10 +14,14 @@ public class HibernateUserStore implements UserStore {
     private final CrudStore crudStore;
 
     public Optional<User> add(User user) {
-        return crudStore.optional(session -> {
-            session.persist(user);
-            return Optional.ofNullable(user);
-        });
+       Optional<User> rsl = Optional.empty();
+        try {
+            crudStore.run(session -> session.persist(user));
+            rsl = Optional.of(user);
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+        return rsl;
     }
 
     public boolean deleteById(int id) {
