@@ -58,6 +58,10 @@
                 <label for="state" class="form-label"><b>Состояние</b></label>
                 <span class="form-control" id="state" th:text="${task.done} == true ? 'Выполнено' : 'Новое'"></span>
             </div>
+            <div class="mb-3">
+                <label for="priority" class="form-label"><b>Приоритет</b></label>
+                <span class="form-control" id="priority" th:text="${task.priority.name}"></span>
+            </div>
             <div class="mb-3 row d-flex">
                 <div class="col-6"></div>
                 <div class="col-6">

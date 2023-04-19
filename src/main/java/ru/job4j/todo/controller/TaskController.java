@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.HibernateTaskService;
+import ru.job4j.todo.service.PriorityService;
 
 @Controller
 @AllArgsConstructor
 public class TaskController {
     private final HibernateTaskService taskService;
+    private final PriorityService priorityService;
 
     @GetMapping({"/", "/index"})
     public String getIndex(Model model) {
@@ -34,6 +36,7 @@ public class TaskController {
     @GetMapping("/add")
     public String getCreationPage(Model model) {
         model.addAttribute("task", new Task());
+        model.addAttribute("priorities", priorityService.findAll());
         return "tasks/create";
     }
 
@@ -67,11 +70,13 @@ public class TaskController {
             return "errors/404";
         }
         model.addAttribute("task", taskOptional.get());
+        model.addAttribute("priorities", priorityService.findAll());
         return "tasks/update";
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Task task, Model model) {
+    public String update(@ModelAttribute Task task, @SessionAttribute User user, Model model) {
+        task.setUser(user);
         if (!taskService.update(task)) {
             model.addAttribute("message", "Ошибка редактирования задания");
             return "errors/404";
