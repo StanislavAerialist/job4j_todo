@@ -6,14 +6,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.HibernateTaskService;
 import ru.job4j.todo.service.PriorityService;
+
+import java.util.List;
 
 @Controller
 @AllArgsConstructor
 public class TaskController {
     private final HibernateTaskService taskService;
     private final PriorityService priorityService;
+    private final CategoryService categoryService;
 
     @GetMapping({"/", "/index"})
     public String getIndex(Model model) {
@@ -37,12 +41,15 @@ public class TaskController {
     public String getCreationPage(Model model) {
         model.addAttribute("task", new Task());
         model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/create";
     }
 
     @PostMapping("/add")
-    public String create(@ModelAttribute Task task, @SessionAttribute User user, Model model) {
+    public String create(@ModelAttribute Task task, @SessionAttribute User user,
+                         @RequestParam("categoriesId") List<Integer> categoriesId, Model model) {
         task.setUser(user);
+        task.setCategories(categoryService.findByIdList(categoriesId));
         if (taskService.add(task) != null) {
             model.addAttribute("message", "Задание добавлено успешно!");
             return "tasks/success";
@@ -71,12 +78,15 @@ public class TaskController {
         }
         model.addAttribute("task", taskOptional.get());
         model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/update";
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Task task, @SessionAttribute User user, Model model) {
+    public String update(@ModelAttribute Task task, @SessionAttribute User user,
+                         @RequestParam("categoriesId") List<Integer> categoriesId, Model model) {
         task.setUser(user);
+        task.setCategories(categoryService.findByIdList(categoriesId));
         if (!taskService.update(task)) {
             model.addAttribute("message", "Ошибка редактирования задания");
             return "errors/404";

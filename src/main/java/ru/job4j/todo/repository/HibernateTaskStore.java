@@ -36,20 +36,22 @@ public class HibernateTaskStore implements TaskStore {
 
     @Override
     public List<Task> findAll() {
-        return crudStore.query("from Task as t JOIN FETCH t.priority", Task.class);
+        return crudStore.query("SELECT DISTINCT t from Task t JOIN FETCH t.priority "
+                + "JOIN FETCH t.categories ORDER BY t.id ASC", Task.class);
     }
 
     @Override
     public List<Task> findSortedByDone(boolean done) {
-        return crudStore.query("from Task as t JOIN FETCH t.priority where t.done = :tDone", Task.class,
-                Map.of("tDone", done)
+        return crudStore.query("SELECT DISTINCT t from Task as t JOIN FETCH t.priority "
+                        + "JOIN FETCH t.categories where t.done = :tDone ORDER BY t.id ASC",
+                Task.class, Map.of("tDone", done)
         );
     }
 
     @Override
     public Optional<Task> findById(int id) {
-        return crudStore.optional("from Task as t JOIN FETCH t.priority where t.id = :tId", Task.class,
-                Map.of("tId", id));
+        return crudStore.optional("from Task t JOIN FETCH t.priority JOIN FETCH t.categories where t.id = :tId",
+                Task.class, Map.of("tId", id));
     }
 
     @Override

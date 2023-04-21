@@ -62,6 +62,12 @@
                     <option th:each="priority : ${priorities}" th:value="${priority.id}" th:text="${priority.name}"></option>
                 </select>
             </div>
+            <div class="mb-3">
+                <label for="categoriesId" class="form-label"><b>Категории</b></label>
+                <select id="categoriesId" name="categoriesId" multiple required>
+                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                </select>
+            </div>
             <div class="mb-3 row">
                 <div class="col-6"></div>
                 <div class="col-6">
