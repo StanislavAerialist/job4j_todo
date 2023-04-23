@@ -10,7 +10,13 @@ import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.HibernateTaskService;
 import ru.job4j.todo.service.PriorityService;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.TimeZone;
+
+import static org.springframework.context.i18n.LocaleContextHolder.setTimeZone;
+
 
 @Controller
 @AllArgsConstructor
@@ -20,20 +26,26 @@ public class TaskController {
     private final CategoryService categoryService;
 
     @GetMapping({"/", "/index"})
-    public String getIndex(Model model) {
-        model.addAttribute("tasks", taskService.findAll());
+    public String getAll(Model model, @SessionAttribute User user) {
+        List<Task> tasks = taskService.findAll();
+        tasks.forEach(t -> setTimeZone(t, user));
+        model.addAttribute("tasks", tasks);
         return "index";
     }
 
     @GetMapping("/done")
-    public String getCompleted(Model model) {
-        model.addAttribute("tasks", taskService.findSortedByDone(true));
+    public String getCompleted(Model model, @SessionAttribute User user) {
+        List<Task> doneTasks = taskService.findSortedByDone(true);
+        doneTasks.forEach(t -> setTimeZone(t, user));
+        model.addAttribute("tasks", doneTasks);
         return "index";
     }
 
     @GetMapping("/new")
-    public String getNew(Model model) {
-        model.addAttribute("tasks", taskService.findSortedByDone(false));
+    public String getNew(Model model, @SessionAttribute User user) {
+        List<Task> newTasks = taskService.findSortedByDone(false);
+        newTasks.forEach(t -> setTimeZone(t, user));
+        model.addAttribute("tasks", newTasks);
         return "index";
     }
 
@@ -59,12 +71,13 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public String getById(Model model, @PathVariable int id) {
+    public String getById(Model model, @PathVariable int id, @SessionAttribute User user) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
             model.addAttribute("message", "Задание не найдено");
             return "errors/404";
         }
+        setTimeZone(taskOptional.get(), user);
         model.addAttribute("task", taskOptional.get());
         return "tasks/one";
     }
@@ -112,5 +125,15 @@ public class TaskController {
         }
         model.addAttribute("message", "Заданаие выполнено!");
         return "tasks/success";
+    }
+
+    private static void setTimeZone(Task task, User user) {
+        ZoneId defTz = TimeZone.getDefault().toZoneId();
+        ZoneId userTimeZone = ZoneId.of(user.getTimezone());
+        LocalDateTime dateTime = task.getCreated()
+                .atZone(defTz)
+                .withZoneSameInstant(userTimeZone)
+                .toLocalDateTime();
+        task.setCreated(dateTime);
     }
 }
