@@ -9,13 +9,11 @@ import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.HibernateTaskService;
 import ru.job4j.todo.service.PriorityService;
+import ru.job4j.todo.util.TimeZone;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+
 import java.util.List;
-import java.util.TimeZone;
 
-import static org.springframework.context.i18n.LocaleContextHolder.setTimeZone;
 
 
 @Controller
@@ -28,7 +26,7 @@ public class TaskController {
     @GetMapping({"/", "/index"})
     public String getAll(Model model, @SessionAttribute User user) {
         List<Task> tasks = taskService.findAll();
-        tasks.forEach(t -> setTimeZone(t, user));
+        tasks.forEach(t -> TimeZone.setTimeZone(t, user));
         model.addAttribute("tasks", tasks);
         return "index";
     }
@@ -36,7 +34,7 @@ public class TaskController {
     @GetMapping("/done")
     public String getCompleted(Model model, @SessionAttribute User user) {
         List<Task> doneTasks = taskService.findSortedByDone(true);
-        doneTasks.forEach(t -> setTimeZone(t, user));
+        doneTasks.forEach(t -> TimeZone.setTimeZone(t, user));
         model.addAttribute("tasks", doneTasks);
         return "index";
     }
@@ -44,7 +42,7 @@ public class TaskController {
     @GetMapping("/new")
     public String getNew(Model model, @SessionAttribute User user) {
         List<Task> newTasks = taskService.findSortedByDone(false);
-        newTasks.forEach(t -> setTimeZone(t, user));
+        newTasks.forEach(t -> TimeZone.setTimeZone(t, user));
         model.addAttribute("tasks", newTasks);
         return "index";
     }
@@ -77,7 +75,7 @@ public class TaskController {
             model.addAttribute("message", "Задание не найдено");
             return "errors/404";
         }
-        setTimeZone(taskOptional.get(), user);
+        TimeZone.setTimeZone(taskOptional.get(), user);
         model.addAttribute("task", taskOptional.get());
         return "tasks/one";
     }
@@ -127,13 +125,5 @@ public class TaskController {
         return "tasks/success";
     }
 
-    private static void setTimeZone(Task task, User user) {
-        ZoneId defTz = TimeZone.getDefault().toZoneId();
-        ZoneId userTimeZone = ZoneId.of(user.getTimezone());
-        LocalDateTime dateTime = task.getCreated()
-                .atZone(defTz)
-                .withZoneSameInstant(userTimeZone)
-                .toLocalDateTime();
-        task.setCreated(dateTime);
-    }
+
 }
